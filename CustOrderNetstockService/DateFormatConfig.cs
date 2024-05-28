@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace CustOrderNetstockService
 {
-    internal class DateFormatConfig
+    public class FormatSpecification
     {
-        public string OrderDate { get; set; }
-        public string SourceFormat { get; set; }
+        public string FieldName { get; set; }
+        public string Format { get; set; }
+        public string DataType { get; set; }
+    }
+
+    public class FormatConfig
+    {
+        public List<FormatSpecification> Formats { get; set; }
     }
 }

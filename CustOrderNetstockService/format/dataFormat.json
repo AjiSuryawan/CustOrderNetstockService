@@ -1,5 +1,34 @@
 {
-  "OrderDate": "MMddyyyy",
-  "SourceFormat": "yyyyMMdd"
-
+  "formats": [
+    {
+      "FieldName": "OrderDate",
+      "Format": "dd-MM-yyyy",
+      "DataType": "date"
+    },
+    {
+      "FieldName": "RequestDate",
+      "Format": "dd-MM-yyyy",
+      "DataType": "date"
+    },
+    {
+      "FieldName": "LineNumber",
+      "Format": "#00.00",
+      "DataType": "Numeric"
+    },
+    {
+      "FieldName": "OutstandingQuantity",
+      "Format": "#00.00",
+      "DataType": "Numeric"
+    },
+    {
+      "FieldName": "OrderQuantity",
+      "Format": "#00.00",
+      "DataType": "Numeric"
+    },
+    {
+      "FieldName": "ItemCode",
+      "Format": "",
+      "DataType": "String"
+    }
+  ]
 }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Quartz;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -9,12 +10,19 @@ using System.IO;
 
 namespace CustOrderNetstockService
 {
+    // Define classes to represent the JSON structure
+
     internal class MyJob : IJob
     {
         public void mainExecute()
         {
             string csvFilePath = ConfigurationManager.AppSettings["csvFilePath"];
             string tableName = ConfigurationManager.AppSettings["TableName"];
+            string jsonFilePath = ConfigurationManager.AppSettings["jsonFilePath"];
+
+            // Load and deserialize JSON format specifications
+            string jsonString = File.ReadAllText(jsonFilePath);
+            FormatConfig formatConfig = JsonConvert.DeserializeObject<FormatConfig>(jsonString);
 
             string DBServer = ConfigurationManager.AppSettings["DBServer"];
             string DBName = ConfigurationManager.AppSettings["DBName"];
@@ -23,12 +31,7 @@ namespace CustOrderNetstockService
             string Timeout = ConfigurationManager.AppSettings["Timeout"];
 
             string connectionString = @"Server=" + DBServer + ";Database=" + DBName + ";Uid=" + DBUser + ";Pwd=" + DBPass + ";Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;Integrated Security=True";
-            string jsonFilePath = ConfigurationManager.AppSettings["jsonFilePath"];
-            string jsonString = File.ReadAllText(jsonFilePath);
-            DateFormatConfig dateFormatConfig = JsonConvert.DeserializeObject<DateFormatConfig>(jsonString);
-            string dateFormat = dateFormatConfig.OrderDate;
-            Console.WriteLine("data dari json "+dateFormat);
-            string query = "SELECT * FROM "+ tableName;
+            string query = "SELECT * FROM " + tableName;
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -41,46 +44,71 @@ namespace CustOrderNetstockService
                     {
                         while (reader.Read())
                         {
-                            var values = new string[reader.FieldCount];
+                            var values = new List<string>();
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
-                                if (reader.GetName(i) == "OrderDate" || reader.GetName(i) == "RequestDate") // Assuming the column name is "OrderDate"
+                                string columnName = reader.GetName(i);
+
+                                // Check if there is a format specification for this column
+                                var formatSpec = formatConfig.Formats.Find(f => f.FieldName == columnName);
+                                
+                                if (formatSpec != null)
                                 {
-                                    DateTime orderDate;
-                                    Console.WriteLine("Data from database: " + reader[i].ToString().Trim() + ", Length: " + reader[i].ToString().Trim().Length);
-                                    // Try parsing the date using multiple formats
-                                    if (DateTime.TryParseExact(reader[i].ToString().Trim(), dateFormatConfig.SourceFormat, null, System.Globalization.DateTimeStyles.None, out orderDate))
+                                    if (formatSpec.DataType == "date")
                                     {
-                                        // Format the parsed date into the target format
-                                        string formattedDate = orderDate.ToString(dateFormat);
-                                        values[i] = formattedDate;
-                                        Console.WriteLine("Formatted date: " + formattedDate);
+                                        string dateString = reader[i].ToString().Trim();
+                                        try
+                                        {
+                                            DateTime dateValue;
+                                            if (DateTime.TryParseExact(reader.GetDateTime(i).ToString(formatSpec.Format), formatSpec.Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
+                                            {
+                                                values.Add(dateValue.ToString(formatSpec.Format)); // Use Format from JSON
+                                            }
+                                        }
+                                        catch (FormatException)
+                                        {
+                                            Console.WriteLine("Parsing failed for column '" + columnName + "'. Original value added: " + dateString.Trim());
+                                            values.Add(dateString);
+                                        }
+
+
+                                    }
+                                    else if (formatSpec.DataType == "Numeric")
+                                    {
+                                        // Adjust formatting for numeric types
+                                        decimal numericValue;
+                                        if (decimal.TryParse(reader[i].ToString(), out numericValue))
+                                        {
+                                            values.Add(numericValue.ToString(formatSpec.Format)); // Use Format from JSON
+                                        }
+                                        else
+                                        {
+                                            values.Add(reader[i].ToString().Trim());
+                                        }
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Unable to parse the date.");
-                                        values[i] = reader[i].ToString().Trim();
+                                        values.Add(reader[i].ToString().Trim());
                                     }
+
                                 }
                                 else
                                 {
-                                    values[i] = reader[i].ToString().Trim(); // Trim each value to remove leading and trailing spaces
+                                    values.Add(reader[i].ToString().Trim());
                                 }
                             }
+
                             string line = string.Join(";", values);
                             writer.WriteLine(line);
                         }
                     }
                 }
             }
-
         }
 
         public async System.Threading.Tasks.Task Execute(IJobExecutionContext context)
         {
             mainExecute();
         }
-
-
     }
 }
