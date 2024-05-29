@@ -88,7 +88,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateFormatConfig.cs" />
+    <Compile Include="models\FormatConfig.cs" />
+    <Compile Include="models\FormatSpecification.cs" />
+    <Compile Include="models\OrderModel.cs" />
     <Compile Include="MyJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -115,5 +117,6 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

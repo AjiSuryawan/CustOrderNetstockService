@@ -21,7 +21,7 @@ namespace CustOrderNetstockService
         public void onDEBUG()
         {
             MyJob job = new MyJob();
-            job.mainExecute();
+            job.MainExecute();
         }
 
         protected override void OnStart(string[] args)

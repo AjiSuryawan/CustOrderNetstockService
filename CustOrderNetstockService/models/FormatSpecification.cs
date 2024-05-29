@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CustOrderNetstockService
+namespace CustOrderNetstockService.models
 {
-    public class FormatSpecification
+    internal class FormatSpecification
     {
         public string FieldName { get; set; }
         public string Format { get; set; }
         public string DataType { get; set; }
-    }
-
-    public class FormatConfig
-    {
-        public List<FormatSpecification> Formats { get; set; }
+        public int Length { get; set; }
+        public string DefaultValue { get; set; }
     }
 }

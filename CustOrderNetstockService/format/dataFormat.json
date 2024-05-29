@@ -1,34 +1,67 @@
 {
   "formats": [
     {
-      "FieldName": "OrderDate",
-      "Format": "dd-MM-yyyy",
-      "DataType": "date"
+      "FieldName": "ItemCode",
+      "Format": "",
+      "DataType": "String",
+      "Length": 32,
+      "DefaultValue": ""
     },
     {
-      "FieldName": "RequestDate",
-      "Format": "dd-MM-yyyy",
-      "DataType": "date"
+      "FieldName": "Location",
+      "Format": "",
+      "DataType": "String",
+      "Length": 0,
+      "DefaultValue": ""
+    },
+    {
+      "FieldName": "CustomerCode",
+      "Format": "",
+      "DataType": "String",
+      "Length": 5,
+      "DefaultValue": ""
+    },
+    {
+      "FieldName": "OrderNumber",
+      "Format": "",
+      "DataType": "String",
+      "Length": 12,
+      "DefaultValue": ""
     },
     {
       "FieldName": "LineNumber",
-      "Format": "#00.00",
-      "DataType": "Numeric"
+      "Format": "#0",
+      "DataType": "Numeric",
+      "Length": 2,
+      "DefaultValue": ""
     },
     {
-      "FieldName": "OutstandingQuantity",
-      "Format": "#00.00",
-      "DataType": "Numeric"
+      "FieldName": "OrderDate",
+      "Format": "yyyyMMdd",
+      "DataType": "Date",
+      "Length": 8,
+      "DefaultValue": ""
     },
     {
       "FieldName": "OrderQuantity",
-      "Format": "#00.00",
-      "DataType": "Numeric"
+      "Format": "#0",
+      "DataType": "Numeric",
+      "Length": 2,
+      "DefaultValue": ""
     },
     {
-      "FieldName": "ItemCode",
-      "Format": "",
-      "DataType": "String"
+      "FieldName": "RequestDate",
+      "Format": "yyyyMMdd",
+      "DataType": "Date",
+      "Length": 8,
+      "DefaultValue": ""
+    },
+    {
+      "FieldName": "OutstandingQuantity",
+      "Format": "#0",
+      "DataType": "Numeric",
+      "Length": 2,
+      "DefaultValue": ""
     }
   ]
 }
